@@ -84,7 +84,7 @@ void UVanagandrGameInstance::CreateEOSSession(bool bIsDedicated, bool bIsLanServ
 	SessionSettings.bShouldAdvertise = true;
 	SessionSettings.Set(SEARCH_KEYWORDS, FString("AllSessions"), EOnlineDataAdvertisementType::ViaOnlineService);
 	SessionSettings.Set(FName(TEXT("SessionTitle")), SessionTitle, EOnlineDataAdvertisementType::ViaOnlineService);
-
+	Session->ClearOnCreateSessionCompleteDelegates(this);
 	Session->OnCreateSessionCompleteDelegates.AddUObject(this, &UVanagandrGameInstance::OnCreateSessionCompleted);
 	Session->CreateSession(0, SESSION_NAME, SessionSettings);
 }
@@ -108,6 +108,7 @@ void UVanagandrGameInstance::FindSessions()
 	SessionSearch->bIsLanQuery = false;
 	SessionSearch->MaxSearchResults = 20;
 	SessionSearch->QuerySettings.SearchParams.Empty();
+	Session->ClearOnFindSessionsCompleteDelegates(this);
 	Session->OnFindSessionsCompleteDelegates.AddUObject(this, &UVanagandrGameInstance::OnFindSessionCompleted);
 	Session->FindSessions(0, SessionSearch.ToSharedRef());
 }

@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-UnrealPSKPSA.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\elliot.birgell\Documents\Unreal Projects\Vanagandr\Vanagandr\Intermediate\Build\Win64\x64\VanagandrEditor\Development\UnrealEd\SharedPCH.UnrealEd.ShadowErrors.InclOrderUnreal5_0.h.obj"
+"C:\Users\elliot.birgell\Documents\Unreal Projects\Vanagandr\Vanagandr\Plugins\Uiana-1.09\UnrealPSKPSA\Intermediate\Build\Win64\x64\UnrealEditor\Development\UnrealPSKPSA\Module.UnrealPSKPSA.cpp.obj"
+"C:\Users\elliot.birgell\Documents\Unreal Projects\Vanagandr\Vanagandr\Plugins\Uiana-1.09\UnrealPSKPSA\Intermediate\Build\Win64\x64\UnrealEditor\Development\UnrealPSKPSA\Default.rc2.res"
+/OUT:"C:\Users\elliot.birgell\Documents\Unreal Projects\Vanagandr\Vanagandr\Plugins\Uiana-1.09\UnrealPSKPSA\Intermediate\Build\Win64\x64\UnrealEditor\Development\UnrealPSKPSA\UnrealEditor-UnrealPSKPSA.lib"

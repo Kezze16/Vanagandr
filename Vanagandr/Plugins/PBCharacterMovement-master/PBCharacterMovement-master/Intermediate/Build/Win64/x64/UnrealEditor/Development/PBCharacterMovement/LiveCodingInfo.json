@@ -1,0 +1,14 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.PBCharacterMovement.cpp.obj": [
+			"PBCharacterMovement.init.gen.cpp.obj",
+			"PBMoveStepSound.gen.cpp.obj",
+			"PBPlayerCharacter.gen.cpp.obj",
+			"PBPlayerMovement.gen.cpp.obj",
+			"PBPlayerCharacter.cpp.obj",
+			"PBPlayerMovement.cpp.obj",
+			"PBCharacterMovementModule.cpp.obj"
+		]
+	}
+}

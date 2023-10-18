@@ -23,5 +23,21 @@ void ASpeedCalculator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(Interval <= 0) {
+		Interval = 30;
+		if(Target != nullptr) {
+			
+			float XVel = Target->GetVelocity().X;
+			float YVel = Target->GetVelocity().Y;
+
+			FVector Speed = FVector(XVel,YVel,0);
+			
+			UE_LOG(LogTemp, Log, TEXT("Speed: %f"), Speed.Size());
+		}
+	}
+
+	if(Interval > 0) {
+		Interval -= 1;
+	}
 }
 

@@ -14,6 +14,10 @@ UWeaponConstraint::~UWeaponConstraint()
 {
 }
 
+void UWeaponConstraint::Begin(TObjectPtr<UWeapon> weapon, UWorld* world)
+{
+}
+
 void UWeaponConstraint::Tick(float DeltaTime, UWeapon* weapon)
 {
 	if (!bShouldTick)

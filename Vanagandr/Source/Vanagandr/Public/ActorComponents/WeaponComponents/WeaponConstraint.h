@@ -25,11 +25,9 @@ public:
 
 
 public:
-	virtual void Begin(TObjectPtr<UWeapon> weapon, UWorld* world) {
-	
-	};
+	virtual void Begin(TObjectPtr<UWeapon> weapon, UWorld* world);
 	virtual void Tick(float DeltaTime, UWeapon* weapon);
-	virtual bool CheckConstraint() { return false; }
+	virtual bool CheckConstraint() { return true; }
 
 public:
 	//Should probly be removed and just use UObject::GetWorld()

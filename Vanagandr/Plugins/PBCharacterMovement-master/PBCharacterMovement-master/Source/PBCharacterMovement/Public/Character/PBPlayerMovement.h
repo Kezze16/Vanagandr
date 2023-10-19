@@ -129,6 +129,9 @@ protected:
 	UPROPERTY(Category = "Character Movement: Walking", EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
 	float AxisSpeedLimit = 6667.5f;
 
+	UPROPERTY(Category = "Character Movement: Walking", EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
+	float VerticalSpeedLimit = 1750.0f;
+
 	/** Threshold relating to speed ratio and friction which causes us to catch air */
 	UPROPERTY(Category = "Character Movement: Walking", EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
 	float SlideLimit = 0.5f;

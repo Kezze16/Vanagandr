@@ -3,6 +3,8 @@
 
 #include "ActorComponents/WeaponComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "ActorComponents/WeaponComponents/WeaponConstraint.h"
 
 
 UWeaponComponent::UWeaponComponent()
@@ -12,6 +14,35 @@ UWeaponComponent::UWeaponComponent()
 
 }
 
+
+void UWeaponComponent::TryFire(APlayerController* Controller, ACharacter* ShootingCharacter, FVector ShootWorldStartPoint, FVector AimDirection)
+{
+	if (!CheckConstraints())
+		return;
+
+	Fire(Controller, ShootingCharacter, FireParams, ShootWorldStartPoint, AimDirection);
+}
+
+void UWeaponComponent::Fire(APlayerController* Controller, ACharacter* ShootingCharacter,
+	FFireParams& Params, FVector ShootWorldStartPoint, FVector AimDirection)
+{
+	OnFire.Broadcast(Controller, ShootingCharacter, Params, ShootWorldStartPoint, AimDirection);
+
+
+}
+
+bool UWeaponComponent::CheckConstraints()
+{
+	for (int i = 0; i < FireConstraints.Num(); i++)
+	{
+		if (FireConstraints[i] != nullptr) {
+			if (!FireConstraints[i]->CheckConstraint())
+				return false;
+		} else PRINT(FString("Constraint is nullptr"))
+	}
+
+	return true;
+}
 
 void UWeaponComponent::BeginPlay()
 {

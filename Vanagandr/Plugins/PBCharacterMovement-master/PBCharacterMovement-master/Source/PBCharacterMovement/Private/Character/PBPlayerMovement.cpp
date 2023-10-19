@@ -204,7 +204,6 @@ void UPBPlayerMovement::TickComponent(float DeltaTime, enum ELevelTick TickType,
 		BrakingWindowTimeElapsed = 0;
 		// make sure this is cleared so the window doesn't shrink on subsequent bhops until it expires.
 	}
-	
 	bCrouchFrameTolerated = IsCrouching();
 }
 
@@ -561,14 +560,14 @@ bool UPBPlayerMovement::ShouldLimitAirControl(float DeltaTime, const FVector& Fa
 FVector UPBPlayerMovement::NewFallVelocity(const FVector& InitialVelocity, const FVector& Gravity, float DeltaTime) const
 {
 	FVector FallVel = Super::NewFallVelocity(InitialVelocity, Gravity, DeltaTime);
-	FallVel.Z = FMath::Clamp(FallVel.Z, -AxisSpeedLimit, AxisSpeedLimit);
+	FallVel.Z = FMath::Clamp(FallVel.Z, -AxisSpeedLimit*2, AxisSpeedLimit);
 	return FallVel;
 }
 
 void UPBPlayerMovement::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
 {
 	Super::UpdateCharacterStateBeforeMovement(DeltaSeconds);
-	Velocity.Z = FMath::Clamp(Velocity.Z, -AxisSpeedLimit, AxisSpeedLimit);
+	Velocity.Z = FMath::Clamp(Velocity.Z, -AxisSpeedLimit*2, AxisSpeedLimit);
 	UpdateCrouching(DeltaSeconds);
 
 }
@@ -576,7 +575,7 @@ void UPBPlayerMovement::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
 void UPBPlayerMovement::UpdateCharacterStateAfterMovement(float DeltaSeconds)
 {
 	Super::UpdateCharacterStateAfterMovement(DeltaSeconds);
-	Velocity.Z = FMath::Clamp(Velocity.Z, -AxisSpeedLimit, AxisSpeedLimit);
+	Velocity.Z = FMath::Clamp(Velocity.Z, -AxisSpeedLimit*2, AxisSpeedLimit);
 	UpdateSurfaceFriction();
 	UpdateCrouching(DeltaSeconds, true);
 }

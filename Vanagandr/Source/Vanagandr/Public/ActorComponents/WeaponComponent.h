@@ -7,7 +7,6 @@
 #include "WeaponComponent.generated.h"
 
 class UWeaponConstraint;
-class 
 
 #pragma region Structs
 
@@ -82,10 +81,11 @@ public:
 	TArray<TObjectPtr<UWeaponConstraint>> FireConstraints;
 
 public:
-	FORCEINLINE void GetCharacter() { return  }
+	FORCEINLINE ACharacter* GetCharacter() { return Character;  }
 
 
 private:
+	ACharacter* Character;
 
 
 protected:

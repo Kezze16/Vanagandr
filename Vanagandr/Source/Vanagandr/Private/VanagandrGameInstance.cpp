@@ -3,6 +3,8 @@
 #include "VanagandrGameInstance.h"
 #include "OnlineSubsystemUtils.h"
 #include "OnlineSubsystem.h"
+#include "OnlineSubsystemTypes.h"
+#include "UObject/Class.h"
 #include "Interfaces/OnlineIdentityInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -82,11 +84,13 @@ void UVanagandrGameInstance::CreateEOSSession(bool bIsDedicated, bool bIsLanServ
 	SessionSettings.bUseLobbiesIfAvailable = false;
 	SessionSettings.bUsesPresence = false;
 	SessionSettings.bShouldAdvertise = true;
+	SessionSettings.bAllowJoinInProgress = false;
 	SessionSettings.Set(SEARCH_KEYWORDS, FString("AllSessions"), EOnlineDataAdvertisementType::ViaOnlineService);
 	SessionSettings.Set(FName(TEXT("SessionTitle")), SessionTitle, EOnlineDataAdvertisementType::ViaOnlineService);
 	Session->ClearOnCreateSessionCompleteDelegates(this);
 	Session->OnCreateSessionCompleteDelegates.AddUObject(this, &UVanagandrGameInstance::OnCreateSessionCompleted);
 	Session->CreateSession(0, SESSION_NAME, SessionSettings);
+
 }
 
 void UVanagandrGameInstance::OnCreateSessionCompleted(FName SessionName, bool bWasSuccessful)
@@ -157,6 +161,7 @@ void UVanagandrGameInstance::JoinEoSSession(int Index)
 	{
 		FString SessionName;
 		SessionSearch->SearchResults[Index].Session.SessionSettings.Get<FString>(FName(TEXT("SessionTitle")), SessionName);
+		Session->ClearOnJoinSessionCompleteDelegates(this);
 		Session->OnJoinSessionCompleteDelegates.AddUObject(this, &UVanagandrGameInstance::OnJoinEoSSessionCompleted);
 		Session->JoinSession(0, SESSION_NAME, SessionSearch->SearchResults[Index]);
 	}
@@ -169,6 +174,7 @@ void UVanagandrGameInstance::DestroyEoSSession()
 	IOnlineSessionPtr Session = Subsystem->GetSessionInterface();
 	if (!Session) return;
 
+	Session->ClearOnDestroySessionCompleteDelegates(this);
 	Session->OnDestroySessionCompleteDelegates.AddUObject(this, &UVanagandrGameInstance::OnDestroySessionCompleted);
 	Session->DestroySession(SESSION_NAME);
 }
@@ -176,14 +182,6 @@ void UVanagandrGameInstance::DestroyEoSSession()
 void UVanagandrGameInstance::OnDestroySessionCompleted(FName SessionName, bool bWasSuccessful)
 {
 	PRINT(FString("Destroyed Session: ") + SessionName.ToString())
-
-		IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld());
-	if (!Subsystem) return;
-	IOnlineSessionPtr Session = Subsystem->GetSessionInterface();
-	if (!Session) return;
-
-	Session->ClearOnDestroySessionCompleteDelegates(this);
-
 }
 
 void UVanagandrGameInstance::OnJoinEoSSessionCompleted(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
@@ -201,7 +199,7 @@ void UVanagandrGameInstance::OnJoinEoSSessionCompleted(FName SessionName, EOnJoi
 			Session->GetResolvedConnectString(SessionName, JoinAddress);
 			if (!JoinAddress.IsEmpty())
 			{
-				UKismetSystemLibrary::PrintString(this, FString("Join address: ") + JoinAddress);
+				PRINT(FString("Join address: "))
 				PlayerController->ClientTravel(JoinAddress, ETravelType::TRAVEL_Absolute);
 			}
 		}
@@ -210,4 +208,67 @@ void UVanagandrGameInstance::OnJoinEoSSessionCompleted(FName SessionName, EOnJoi
 	{
 		PRINT(FString("Couldn't join session"))
 	}
+}
+
+void UVanagandrGameInstance::SetSessionInProgress(bool bIsInProgress)
+{
+	IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld());
+	if (!Subsystem) return;
+	IOnlineSessionPtr Session = Subsystem->GetSessionInterface();
+	if (!Session) return;
+
+	EOnlineSessionState::Type State = Session->GetSessionState(SESSION_NAME);
+
+	switch (State)
+	{
+	case EOnlineSessionState::Type::Creating:
+	case EOnlineSessionState::Type::Destroying:
+	case EOnlineSessionState::Type::Ended:
+	case EOnlineSessionState::Type::Ending:
+	case EOnlineSessionState::Type::Starting:
+	case EOnlineSessionState::Type::NoSession:
+		PRINT(FString("Incorrect Session State: ").Append(FString::FromInt(State)))
+		break;
+	case EOnlineSessionState::Type::Pending:
+		if (bIsInProgress)
+		{
+			Session->ClearOnStartSessionCompleteDelegates(this);
+			Session->OnStartSessionCompleteDelegates.AddUObject(this, &UVanagandrGameInstance::OnStartSessionCompleted);
+			Session->StartSession(SESSION_NAME);
+		}
+		else 
+		{
+			PRINT(FString("Incorrect Session State: ").Append(FString::FromInt(State)))
+		}
+		break;
+	case EOnlineSessionState::Type::InProgress:
+		if (!bIsInProgress)
+		{
+			Session->ClearOnEndSessionCompleteDelegates(this);
+			Session->OnEndSessionCompleteDelegates.AddUObject(this, &UVanagandrGameInstance::OnEndSessionCompleted);
+			Session->EndSession(SESSION_NAME);
+		}
+		else
+		{
+			PRINT(FString("Incorrect Session State: ").Append(FString::FromInt(State)))
+		}
+		break;
+	}
+
+}
+
+void UVanagandrGameInstance::OnEndSessionCompleted(FName SessionName, bool bWasSuccessful)
+{
+	if (bWasSuccessful)
+		PRINT(FString("Session ended, should be able to join again"))
+	else
+		PRINT(FString("Failed to end session"))
+}
+
+void UVanagandrGameInstance::OnStartSessionCompleted(FName SessionName, bool bWasSuccessful)
+{
+	if (bWasSuccessful)
+		PRINT(FString("Session started"))
+	else
+		PRINT(FString("Failed to start session"))
 }

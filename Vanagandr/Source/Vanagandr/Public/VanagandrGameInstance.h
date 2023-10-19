@@ -62,12 +62,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "EOS")
 		void CreateEOSSession(bool bIsDedicated, bool bIsLanServer, int32 NumberOfPublicConnections, FString SessionTitle);
 
-	void OnCreateSessionCompleted(FName SessionName, bool bWasSuccessful);
-
 	UFUNCTION(BlueprintCallable, Category = "EOS")
 		void FindSessions();
-
-	void OnFindSessionCompleted(bool bWasSuccessful);
 
 	UPROPERTY(BlueprintReadOnly, Category = "EOS")
 		FSessionSearchResults SessionSearchResults;
@@ -75,16 +71,26 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "EOS")
 		void JoinEoSSession(int Index);
 
-	void OnJoinEoSSessionCompleted(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
-
 	UFUNCTION(BlueprintCallable, Category = "EOS")
 		void DestroyEoSSession();
-
-	void OnDestroySessionCompleted(FName SessionName, bool bWasSuccessful);
 
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EOS")
-		FString OpenLevelText;
+	FString OpenLevelText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EOS")
+	FString MainMenuURL;
+
+	UFUNCTION(BlueprintCallable, Category = "EOS")
+	void SetSessionInProgress(bool bIsInProgress);
+
+	//Delegate functions
+	void OnCreateSessionCompleted(FName SessionName, bool bWasSuccessful);
+	void OnFindSessionCompleted(bool bWasSuccessful);
+	void OnJoinEoSSessionCompleted(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+	void OnDestroySessionCompleted(FName SessionName, bool bWasSuccessful);
+	void OnEndSessionCompleted(FName SessionName, bool bWasSuccessful);
+	void OnStartSessionCompleted(FName SessionName, bool bWasSuccessful);
 	
 };

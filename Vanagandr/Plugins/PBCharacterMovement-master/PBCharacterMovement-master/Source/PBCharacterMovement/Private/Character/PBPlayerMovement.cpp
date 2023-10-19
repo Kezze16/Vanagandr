@@ -560,14 +560,14 @@ bool UPBPlayerMovement::ShouldLimitAirControl(float DeltaTime, const FVector& Fa
 FVector UPBPlayerMovement::NewFallVelocity(const FVector& InitialVelocity, const FVector& Gravity, float DeltaTime) const
 {
 	FVector FallVel = Super::NewFallVelocity(InitialVelocity, Gravity, DeltaTime);
-	FallVel.Z = FMath::Clamp(FallVel.Z, -AxisSpeedLimit*2, AxisSpeedLimit);
+	FallVel.Z = FMath::Clamp(FallVel.Z, -AxisSpeedLimit*2, AxisSpeedLimit*2);
 	return FallVel;
 }
 
 void UPBPlayerMovement::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
 {
 	Super::UpdateCharacterStateBeforeMovement(DeltaSeconds);
-	Velocity.Z = FMath::Clamp(Velocity.Z, -AxisSpeedLimit*2, AxisSpeedLimit);
+	Velocity.Z = FMath::Clamp(Velocity.Z, -AxisSpeedLimit*2, AxisSpeedLimit*2);
 	UpdateCrouching(DeltaSeconds);
 
 }
@@ -575,7 +575,7 @@ void UPBPlayerMovement::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
 void UPBPlayerMovement::UpdateCharacterStateAfterMovement(float DeltaSeconds)
 {
 	Super::UpdateCharacterStateAfterMovement(DeltaSeconds);
-	Velocity.Z = FMath::Clamp(Velocity.Z, -AxisSpeedLimit*2, AxisSpeedLimit);
+	Velocity.Z = FMath::Clamp(Velocity.Z, -AxisSpeedLimit*2, AxisSpeedLimit*2);
 	UpdateSurfaceFriction();
 	UpdateCrouching(DeltaSeconds, true);
 }

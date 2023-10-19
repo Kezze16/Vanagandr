@@ -76,6 +76,8 @@ void UVanagandrGameInstance::CreateEOSSession(bool bIsDedicated, bool bIsLanServ
 	IOnlineSessionPtr Session = Subsystem->GetSessionInterface();
 	if (!Session) return;
 
+	SessionSearchResults.Sessions.Empty();
+
 	FOnlineSessionSettings SessionSettings;
 	SessionSettings.NumPublicConnections = NumberOfPublicConnections;
 	SessionSettings.bIsDedicated = bIsDedicated;
@@ -112,6 +114,7 @@ void UVanagandrGameInstance::FindSessions()
 	SessionSearch->bIsLanQuery = false;
 	SessionSearch->MaxSearchResults = 20;
 	SessionSearch->QuerySettings.SearchParams.Empty();
+	SessionSearchResults.Sessions.Empty();
 	Session->ClearOnFindSessionsCompleteDelegates(this);
 	Session->OnFindSessionsCompleteDelegates.AddUObject(this, &UVanagandrGameInstance::OnFindSessionCompleted);
 	Session->FindSessions(0, SessionSearch.ToSharedRef());
@@ -141,6 +144,7 @@ void UVanagandrGameInstance::OnFindSessionCompleted(bool bWasSuccessful)
 		}
 		else
 		{
+			SessionSearchResults.Sessions.Empty();
 			PRINT(FString("No sessions to join"))
 		}
 	}
@@ -156,7 +160,7 @@ void UVanagandrGameInstance::JoinEoSSession(int Index)
 	if (!Subsystem) return;
 	IOnlineSessionPtr Session = Subsystem->GetSessionInterface();
 	if (!Session) return;
-
+	SessionSearchResults.Sessions.Empty();
 	if (SessionSearch->SearchResults.Num() > 0 && SessionSearch->SearchResults.Num() > Index)
 	{
 		FString SessionName;
